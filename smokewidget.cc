@@ -19,7 +19,10 @@ SmokeWidget::SmokeWidget(QWidget *parent)
 
     increase_s = 0.8;
     increase_v = 0.8;
-    dataset = 'rho';
+    dataset = 'r';
+    scalar_dataset = 'r';
+    vector_dataset = 'v';
+    glyphs = 'c';
 
     select_points = 1;
 
@@ -191,37 +194,58 @@ void SmokeWidget::visualize()
         //CONES
             int cell_width = 10;
             int cell_height = 10;
+            float radius;
+
+
 
             glClear(GL_COLOR_BUFFER_BIT);
-            //glLoadIdentity();
             glColor3f(1.0,1.0,0.0);
 
-            for (i = 0; i < DIM; i++)
-                for (j = 0; j < DIM; j++)
+           for (i = 0; i < DIM; i++)
+               for (j = 0; j < DIM; j++)
                 {
-                    idx = (j * DIM) + i;
-                    direction_to_color(d_simulation.get_vx()[idx],d_simulation.get_vy()[idx],color_dir);
+                   idx = (j * DIM) + i;
+                   //compute radius according to scalar dataset:
+                   switch (scalar_dataset) {
+                       case 'r':
+                           radius = d_simulation.get_rho()[idx]; // calculate radius
+                       break;
+                       case 'v':
+                           radius = (sqrt(pow(d_simulation.get_vx()[idx],2) + pow(d_simulation.get_vy()[idx],2)))*200; // calculate radius
+                       break;
+                       case 'f':
+                           radius = (sqrt(pow(d_simulation.get_fx()[idx],2) + pow(d_simulation.get_fy()[idx],2)))*200; // calculate radius
+                       break;
+                   }
+                   float direction;
+                   switch (vector_dataset) {
+                       case 'v':
+                            direction_to_color(d_simulation.get_vx()[idx],-d_simulation.get_vy()[idx],color_dir);
+                            direction = atan2 (d_simulation.get_vx()[idx], -d_simulation.get_vy()[idx]) * (180 / M_PI);
+                       break;
+                       case 'f':
+                            direction_to_color(d_simulation.get_fx()[idx],-d_simulation.get_fy()[idx],color_dir);
+                            direction = atan2 (d_simulation.get_fx()[idx], -d_simulation.get_fy()[idx]) * (180 / M_PI);
+                       break;
+                   }
+
+                  //float length = sqrt(pow(d_simulation.get_vx()[idx],2) + pow(d_simulation.get_vy()[idx],2));
+
+                    glPushMatrix();
+                    glTranslatef(wn + (fftw_real)i * wn,hn + (fftw_real)j * hn,0);
+                    glRotatef(direction,0,0,1);
                     glBegin(GL_TRIANGLE_FAN);
-                    glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-                   // glVertex2f((wn + (fftw_real)i * wn) + vec_scale * d_simulation.get_vx()[idx], (hn + (fftw_real)j * hn) + vec_scale * d_simulation.get_vy()[idx]);
-                   // glVertex2f(wn +10 + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-
-                    float direction = atan2(i,j)*180/M_PI;
-                    glTranslatef(i,j, 0);
-                    glRotated(direction,0,0,1);
-                    float radius = cell_height/3; // calculate radius
-                    for (int angle = 1; angle <= 360; angle++) {
-                        glColor4f(1,0,0,0.5-(0.5/angle)); // colors(R, G, B, alpha)
-                       // glVertex2f(cell_width/2, cell_height); // draw cone point/tip
-                        glVertex2f(sin(angle) * radius, cos(angle) * radius); // draw cone base
-                    }
-
-                     glEnd();
-                     glPopMatrix(); // now it's at normal scale again
-                     glLoadIdentity();
-
-                   // glVertex2f((wn + (fftw_real)i * wn) + vec_scale * d_simulation.get_vx()[idx], (hn + (fftw_real)j * hn) + vec_scale * d_simulation.get_vy()[idx]);
-                }
+                         glVertex2f(cell_width, cell_height); // draw cone point/tip
+                         for (int angle = 1; angle <= 360; angle++) {
+                              glColor4f(1,0,0,0.5/color_dir); // colors(R, G, B, alpha)
+                              glVertex2f(sin(angle) * radius, cos(angle) * radius); // draw cone base (circle)
+                         }
+                    glEnd();
+                   // float radius = d_simulation.get_rho()[idx]; // calculate radius
+                    //int slices = 30; int stacks = 10;
+                    //glutSolidCone(radius, cell_height, slices, stacks);
+                    glPopMatrix();
+                 }
 
 
     }

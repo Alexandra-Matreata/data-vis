@@ -126,3 +126,33 @@ void MainWindow::on_no_draw_vecs_clicked()
     ui->openGLWidget->draw_smoke = 1;
     ui->openGLWidget->update();
 }
+
+void MainWindow::on_scalar_rho_clicked()
+{
+    ui->openGLWidget->scalar_dataset = 'r';
+    ui->openGLWidget->update();
+}
+
+void MainWindow::on_scalar_v_clicked()
+{
+    ui->openGLWidget->scalar_dataset = 'v';
+    ui->openGLWidget->update();
+}
+
+void MainWindow::on_scalar_f_clicked()
+{
+    ui->openGLWidget->scalar_dataset = 'f';
+    ui->openGLWidget->update();
+}
+
+void MainWindow::on_vector_v_clicked()
+{
+    ui->openGLWidget->vector_dataset = 'v';
+    ui->openGLWidget->update();
+}
+
+void MainWindow::on_vector_f_clicked()
+{
+    ui->openGLWidget->vector_dataset = 'f';
+    ui->openGLWidget->update();
+}

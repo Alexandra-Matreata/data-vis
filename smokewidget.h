@@ -39,6 +39,9 @@ public:
     float increase_s;
     float increase_v;
     char dataset;
+    char scalar_dataset;
+    char glyphs;
+    char vector_dataset;
     int   draw_smoke;           //draw the smoke or not
     int   draw_vecs;            //draw the vector field or not
 

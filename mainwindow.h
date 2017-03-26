@@ -39,6 +39,16 @@ private slots:
 
     void on_no_draw_vecs_clicked();
 
+    void on_scalar_rho_clicked();
+
+    void on_scalar_v_clicked();
+
+    void on_scalar_f_clicked();
+
+    void on_vector_v_clicked();
+
+    void on_vector_f_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
